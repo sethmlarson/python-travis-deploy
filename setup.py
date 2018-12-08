@@ -3,7 +3,11 @@ import re
 from setuptools import setup, find_packages
 
 with io.open("src/python_travis_deploy/__init__.py", "rt", encoding="utf-8") as f:
-    version = re.search(r"^__version__\s+=\s+[\"\']([\d.]+)[\"\']$", f.read()).group(1)
+    version = re.search(
+        pattern=r"^__version__\s+=\s+[\"\']([\d.]+)[\"\']$",
+        string=f.read(),
+        flags=re.MULTILINE,
+    ).group(1)
 
 
 with io.open("README.rst", "rt", encoding="utf-8") as f:
