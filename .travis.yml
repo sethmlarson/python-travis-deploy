@@ -40,13 +40,8 @@ stages:
   - name: integration
     if: |
       head_branch = master
+      head_repo = SethMichaelLarson/python-travis-deploy
       type = pull_request
-      commit_message =~ /^Release ([\d.]+)$/
-
-  # Run deployment when release candidates are merged
-  - name: deploy
-    if: |
-      branch = master
       commit_message =~ /^Release ([\d.]+)$/
 
 # Tag a build automatically for Travis to release
@@ -62,6 +57,7 @@ deploy:
     script: bash _travis/deploy.sh
     on:
       repo: SethMichaelLarson/python-travis-deploy
+      condition: commit_message =~ ^Release ([\d.]+)$
 
   # Creates a GitHub release
   - provider: releases
@@ -73,6 +69,7 @@ deploy:
     draft: true
     on:
       repo: SethMichaelLarson/python-travis-deploy
+      condition: commit_message =~ ^Release ([\d.]+)$
 
 notifications:
   email: false
