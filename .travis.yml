@@ -8,7 +8,6 @@ jobs:
     - python: 3.7
       env: TOXENV=lint
       stage: test
-
     - python: 2.7
       env: TOXENV=py27
       stage: test
@@ -39,9 +38,9 @@ stages:
   # Run integration tests for release candidates
   - name: integration
     if: |
-      head_branch = master
-      head_repo = SethMichaelLarson/python-travis-deploy
-      type = pull_request
+      head_branch = master AND
+      head_repo = SethMichaelLarson/python-travis-deploy AND
+      type = pull_request AND
       commit_message =~ /^Release ([\d.]+)$/
 
 # Tag a build automatically for Travis to release
@@ -56,10 +55,11 @@ deploy:
   - provider: script
     script: bash _travis/deploy.sh
     on:
+      branch: master
       repo: SethMichaelLarson/python-travis-deploy
-      condition: commit_message =~ ^Release ([\d.]+)$
+      condition: commit_message =~ /^Release ([\d.]+)$/
 
-  # Creates a GitHub release
+  # Drafts a GitHub release
   - provider: releases
     api_key:
       secure:
@@ -68,8 +68,9 @@ deploy:
     skip_cleanup: true
     draft: true
     on:
+      branch: master
       repo: SethMichaelLarson/python-travis-deploy
-      condition: commit_message =~ ^Release ([\d.]+)$
+      condition: commit_message =~ /^Release ([\d.]+)$/
 
 notifications:
   email: false

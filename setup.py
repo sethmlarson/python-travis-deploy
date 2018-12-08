@@ -16,6 +16,7 @@ setup(
     license="Apache-2.0",
     description="A test project for deploying to PyPI from Travis",
     long_description=long_description,
+    url="https://github.com/SethMichaelLarson/python_travis_deploy",
     author="Seth Michael Larson",
     author_email="sethmichaellarson@gmail.com",
     packages=find_packages("src/"),
@@ -34,6 +35,5 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
     ],
 )
