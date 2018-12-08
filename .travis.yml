@@ -1,6 +1,13 @@
 language: python
 sudo: false
 
+env:
+  global:
+    - PYPI_USERNAME=SethMichaelLarson
+    # PYPI_PASSWORD
+    - secure: bqwKlcsHnqCT+fQiE3YrdSpOE9kh/Jxn8Ozaw286wOTZtn4mTe4ARhq0XiXKv6Tuu5AU2Ds3mbLyJoBo1i/pVD1j3O6bXBq/eZPBFmktj48cqNT6e0yyi3bbFbydLmK26m9uRofgOPx6PeWbJRvBj1wTpi+BdjSo3BjwxDJaJlMvSNvzp/hmHseO9GyFzUfz8aeaqgU7y5Th4DA6iVSYaFbSr8aopnKY+dBTV+uSyn7DDIP9AjoAqDTUTYgVWbUVyLMUpbM9xn+XP9jYdUWafcJa+JBDxfmD9SLVyJs9Iu7LERpF+f4mX/RINrRfFe/43xe08pm0f2MNAHN9B6M8Eyw6Y8bMqYHBNAtqdc/HMnuGjG6CLuk0YxSbJUdPRz1eczLBrn+T1C5ZkC/H7NoNYuHqJ+iN0U99fT7S+SuFgY5sPSO59KTgYNp8N0mtQDW9itjmNM6KEvPsHqs9wHIFWYVjo1HWEXVIODpWiIa1ziB9xTdUDUmpB1QH8x/I8GVQc3YsR7C6iEyJP1RHyHn25l8CPytxuiVMdizd0w8UOgzsAW4qb6kc8xp9iftD8GFJe0N48ecR2q0wPdajusElNOqPrdctum7uECumhGcyFm7cI07VqxLG5LruPwFJ19XR/Zgc6nuobgpKqFDDs2lOQaV36wjK1A+Qjs2haw/piCE=
+
+
 jobs:
   include:
 
@@ -40,13 +47,6 @@ stages:
       type = pull_request AND
       commit_message =~ /^Release ([\d.]+)$/
 
-# Tag a build automatically for Travis to release
-before_deploy:
-  - git config --local user.name "Seth Michael Larson"
-  - git config --local user.email "sethmichaellarson@gmail.com"
-  - export TRAVIS_TAG=${./_travis/get_tag.sh}
-  - git tag $TRAVIS_TAG
-
 deploy:
   # Runs the deployment to PyPI with Twine
   - provider: script
@@ -54,12 +54,12 @@ deploy:
     on:
       branch: master
       repo: SethMichaelLarson/python-travis-deploy
-      condition: commit_message =~ /^Release ([\d.]+)$/
+      tags: true
 
   # Drafts a GitHub release
   - provider: releases
     api_key:
-      secure:
+      secure: EkTuWL6qbaM3mLNxRuquFdUDRg82eoNarEg5XSIFgWOTdXn9mtK2UYzz1K/r+ZCv7mlAR/QEtK62O6wlQ9D8plF+lcrSXJeMeKe6aDbEzSdzg21TKLrwps6Z5+pYn+vQ0AtVbWfwhiECr8lv68Wc7XBe/UlyT031WRN0O/faEzygqhn8xcj95EVrZIjLGT9URSjjlWNDbGNkAXyd1qU5SzD3V5Zx80F9yVV1N+re1ym27R0z32/A42E3VbBanx4RGCknmH6m0Sp/puoqip8ne4yOgT9wSBkk8FkcLSc+RrP2zMBxGhvn6M0laa9LPXGoHusAP2sJNwqZO3oxixT45erfyquDjwMYn/zLWwkI/C+BXe8kN0g+FyoEEdoTJv3cT2PJJJEBPOFD1vqrArFtrMURnPvxdkGF9kLQZe2Km+DI9aQYXDiZxCF0RwdH0DKTDBDnUuY+VjB3DeqJpHUB4GnR64Jh1sGZRYhZIPils4cRGsIoIyWOixr0al4ieF1RPCMNveFpFpm2Jkd6AsfgJvMR3CBaEbZLCEx31xAboV4qO4J+90Bm4MkBoW169cgNCFlK6al24MOZkthioffdLUOuRCefFLsPa4qGGyo3LJ7zDfc+lKE/9Q9TgAGibC2WAFSUlb8D35L+SWwhhHS5cyQir0TWOWvr71g/6Z6SSYE=
     name: "$TRAVIS_TAG"
     body: "Release $TRAVIS_TAG"
     skip_cleanup: true
@@ -67,7 +67,7 @@ deploy:
     on:
       branch: master
       repo: SethMichaelLarson/python-travis-deploy
-      condition: commit_message =~ /^Release ([\d.]+)$/
+      tags: true
 
 notifications:
   email: false
