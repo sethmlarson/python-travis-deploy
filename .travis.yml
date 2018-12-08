@@ -1,0 +1,78 @@
+language: python
+sudo: false
+
+jobs:
+  include:
+
+    # Unit tests run on every change
+    - python: 3.7
+      env: TOXENV=lint
+      stage: test
+
+    - python: 2.7
+      env: TOXENV=py27
+      stage: test
+    - python: 3.5
+      env: TOXENV=py35
+      stage: test
+    - python: 3.6
+      env: TOXENV=py36
+      stage: test
+    - python: 3.7
+      env: TOXENV=py37
+      stage: test
+
+    # Integration tests only run on release candidates
+    - python: 3.7
+      env: TOXENV=packaging
+      stage: integration
+
+install:
+  - python -m pip install -U tox
+
+script:
+  - tox
+
+stages:
+  - test
+
+  # Run integration tests for release candidates
+  - name: integration
+    if: |
+      head_branch = master
+      type = pull_request
+      commit_message =~ /^Release ([\d.]+)$/
+
+  # Run deployment when release candidates are merged
+  - name: deploy
+    if: |
+      branch = master
+      commit_message =~ /^Release ([\d.]+)$/
+
+# Tag a build automatically for Travis to release
+before_deploy:
+  - git config --local user.name "Seth Michael Larson"
+  - git config --local user.email "sethmichaellarson@gmail.com"
+  - export TRAVIS_TAG=${./_travis/get_tag.sh}
+  - git tag $TRAVIS_TAG
+
+deploy:
+  # Runs the deployment to PyPI with Twine
+  - provider: script
+    script: bash _travis/deploy.sh
+    on:
+      repo: SethMichaelLarson/python-travis-deploy
+
+  # Creates a GitHub release
+  - provider: releases
+    api_key:
+      secure:
+    name: "$TRAVIS_TAG"
+    body: "Release $TRAVIS_TAG"
+    skip_cleanup: true
+    draft: true
+    on:
+      repo: SethMichaelLarson/python-travis-deploy
+
+notifications:
+  email: false
