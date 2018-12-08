@@ -5,7 +5,7 @@ jobs:
   include:
 
     # Unit tests run on every change
-    - python: 3.7
+    - python: 3.6
       env: TOXENV=lint
       stage: test
     - python: 2.7
@@ -16,9 +16,6 @@ jobs:
       stage: test
     - python: 3.6
       env: TOXENV=py36
-      stage: test
-    - python: 3.7
-      env: TOXENV=py37
       stage: test
 
     # Integration tests only run on release candidates
