@@ -49,7 +49,7 @@ deploy:
     env: PYPI_BUILD=sdist
     script: bash _travis/deploy.sh
     on:
-      condition: env(TOXENV) = py36
+      condition: env\(TOXENV\) = py36
       branch: master
       repo: SethMichaelLarson/python-travis-deploy
       tags: true
