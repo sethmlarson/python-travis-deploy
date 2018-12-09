@@ -46,8 +46,7 @@ stages:
 deploy:
   # Deploy the sdist to PyPI once
   - provider: script
-    env: PYPI_BUILD=sdist
-    script: bash _travis/deploy.sh
+    script: bash _travis/deploy.sh sdist
     on:
       condition: env\(TOXENV\) = py36
       branch: master
@@ -56,8 +55,7 @@ deploy:
 
   # Deploy bdist_wheel to PyPI for each Python version
   - provider: script
-    env: PYPI_BUILD=bdist_wheel
-    script: bash _travis/deploy.sh
+    script: bash _travis/deploy.sh bdist_wheel
     on:
       branch: master
       repo: SethMichaelLarson/python-travis-deploy
