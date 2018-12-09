@@ -47,6 +47,7 @@ deploy:
   # Deploy the sdist to PyPI once
   - provider: script
     script: bash _travis/deploy.sh sdist
+    skip_cleanup: true
     on:
       condition: env\(TOXENV\) = py36
       branch: master
@@ -56,6 +57,7 @@ deploy:
   # Deploy bdist_wheel to PyPI for each Python version
   - provider: script
     script: bash _travis/deploy.sh bdist_wheel
+    skip_cleanup: true
     on:
       branch: master
       repo: SethMichaelLarson/python-travis-deploy
@@ -68,6 +70,7 @@ deploy:
     name: "$TRAVIS_TAG"
     body: "Release $TRAVIS_TAG"
     draft: true
+    skip_cleanup: true
     file_glob: true
     file: dist/*
     overwrite: true
