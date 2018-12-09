@@ -26,7 +26,7 @@ jobs:
       stage: test
 
     # Integration tests only run on release candidates
-    - python: 3.7
+    - python: 3.6
       env: TOXENV=packaging
       stage: integration
 
@@ -41,15 +41,22 @@ stages:
 
   # Run integration tests for release candidates
   - name: integration
-    if: |
-      head_branch = master AND
-      head_repo = SethMichaelLarson/python-travis-deploy AND
-      type = pull_request AND
-      commit_message =~ /^Release ([\d.]+)$/
+    if: type = pull_request AND head_branch =~ ^release-[\d.]+$
 
 deploy:
-  # Runs the deployment to PyPI with Twine
+  # Deploy the sdist to PyPI once
   - provider: script
+    env: PYPI_BUILD=sdist
+    script: bash _travis/deploy.sh
+    on:
+      condition: env(TOXENV) = py36
+      branch: master
+      repo: SethMichaelLarson/python-travis-deploy
+      tags: true
+
+  # Deploy bdist_wheel to PyPI for each Python version
+  - provider: script
+    env: PYPI_BUILD=bdist_wheel
     script: bash _travis/deploy.sh
     on:
       branch: master
@@ -62,8 +69,10 @@ deploy:
       secure: EkTuWL6qbaM3mLNxRuquFdUDRg82eoNarEg5XSIFgWOTdXn9mtK2UYzz1K/r+ZCv7mlAR/QEtK62O6wlQ9D8plF+lcrSXJeMeKe6aDbEzSdzg21TKLrwps6Z5+pYn+vQ0AtVbWfwhiECr8lv68Wc7XBe/UlyT031WRN0O/faEzygqhn8xcj95EVrZIjLGT9URSjjlWNDbGNkAXyd1qU5SzD3V5Zx80F9yVV1N+re1ym27R0z32/A42E3VbBanx4RGCknmH6m0Sp/puoqip8ne4yOgT9wSBkk8FkcLSc+RrP2zMBxGhvn6M0laa9LPXGoHusAP2sJNwqZO3oxixT45erfyquDjwMYn/zLWwkI/C+BXe8kN0g+FyoEEdoTJv3cT2PJJJEBPOFD1vqrArFtrMURnPvxdkGF9kLQZe2Km+DI9aQYXDiZxCF0RwdH0DKTDBDnUuY+VjB3DeqJpHUB4GnR64Jh1sGZRYhZIPils4cRGsIoIyWOixr0al4ieF1RPCMNveFpFpm2Jkd6AsfgJvMR3CBaEbZLCEx31xAboV4qO4J+90Bm4MkBoW169cgNCFlK6al24MOZkthioffdLUOuRCefFLsPa4qGGyo3LJ7zDfc+lKE/9Q9TgAGibC2WAFSUlb8D35L+SWwhhHS5cyQir0TWOWvr71g/6Z6SSYE=
     name: "$TRAVIS_TAG"
     body: "Release $TRAVIS_TAG"
-    skip_cleanup: true
     draft: true
+    file_glob: true
+    file: dist/*
+    overwrite: true
     on:
       branch: master
       repo: SethMichaelLarson/python-travis-deploy
