@@ -44,19 +44,9 @@ stages:
     if: type = pull_request AND head_branch =~ ^release-[\d.]+$
 
 deploy:
-  # Deploy the sdist to PyPI once
+  # Deploy sdist and bdist_wheel to PyPI for each Python version
   - provider: script
-    script: bash _travis/deploy.sh sdist
-    skip_cleanup: true
-    on:
-      condition: env\(TOXENV\) = py36
-      branch: master
-      repo: SethMichaelLarson/python-travis-deploy
-      tags: true
-
-  # Deploy bdist_wheel to PyPI for each Python version
-  - provider: script
-    script: bash _travis/deploy.sh bdist_wheel
+    script: bash _travis/deploy.sh
     skip_cleanup: true
     on:
       branch: master
